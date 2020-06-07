@@ -37,79 +37,91 @@ public class InnReservations {
         System.out.println("[5] Revenue Summary");
     }
 
-    private static void interpUserInput(Scanner sc) {
-        Scanner sc = new Scanner(System.in); 
-        displayOptions();
-        //decide if we want to take it as a string or as a number
-        String feature = sc.nextLine(); 
-        if (feature == "1" or "Rooms and Rates"){
-            roomsAndRates();
-        }
-        if(feature == "2" or "Reservations"){
-            reservations();
-        }
-        if(feature == "3" or "Reservation Change"){
-            rchange();
-        }
-        if(feature == "4" or "Reservation Cancellation"){
-            rcancel();
-        }
-        if(feature == "5" or "Revenue Summary"){
-            revenue();
-        }
-        else{
-            //some kind of error handeling
-        }
+    // private static void interpUserInput(Scanner sc) {
+    //     Scanner sc = new Scanner(System.in); 
+    //     displayOptions();
+    //     //decide if we want to take it as a string or as a number
+    //     String feature = sc.nextLine(); 
+    //     if (feature == "1" || "Rooms and Rates"){
+    //         roomsAndRates();
+    //     }
+    //     if(feature == "2" || "Reservations"){
+    //         reservations();
+    //     }
+    //     if(feature == "3" || "Reservation Change"){
+    //         rchange();
+    //     }
+    //     if(feature == "4" || "Reservation Cancellation"){
+    //         rcancel();
+    //     }
+    //     if(feature == "5" || "Revenue Summary"){
+    //         revenue();
+    //     }
+    //     else{
+    //         //some kind of error handeling
+    //     }
 
-    }
+    // }
 
-    private void demo2() throws SQLException {
+ //    private void demo2() throws SQLException {
 
-	// Step 1: Establish connection to RDBMS
-	try (Connection conn = DriverManager.getConnection(JDBC_URL,
-							   JDBC_USER,
-							   JDBC_PASSWORD)) {
-	    // Step 2: Construct SQL statement
-	    String sql = "SELECT * FROM hp_goods";
+	// // Step 1: Establish connection to RDBMS
+	// try (Connection conn = DriverManager.getConnection(JDBC_URL,
+	// 						   JDBC_USER,
+	// 						   JDBC_PASSWORD)) {
+	//     // Step 2: Construct SQL statement
+	//     String sql = "SELECT * FROM hp_goods";
 
-	    // Step 3: (omitted in this example) Start transaction
+	//     // Step 3: (omitted in this example) Start transaction
 
-	    // Step 4: Send SQL statement to DBMS
-	    try (Statement stmt = conn.createStatement();
-		 ResultSet rs = stmt.executeQuery(sql)) {
+	//     // Step 4: Send SQL statement to DBMS
+	//     try (Statement stmt = conn.createStatement();
+	// 	 ResultSet rs = stmt.executeQuery(sql)) {
 
-		// Step 5: Receive results
-		while (rs.next()) {
-		    String flavor = rs.getString("Flavor");
-		    String food = rs.getString("Food");
-		    float price = rs.getFloat("Price");
-		    System.out.format("%s %s ($%.2f) %n", flavor, food, price);
-		}
-	    }
+	// 	// Step 5: Receive results
+	// 	while (rs.next()) {
+	// 	    String flavor = rs.getString("Flavor");
+	// 	    String food = rs.getString("Food");
+	// 	    float price = rs.getFloat("Price");
+	// 	    System.out.format("%s %s ($%.2f) %n", flavor, food, price);
+	// 	}
+	//     }
 
-	    // Step 6: (omitted in this example) Commit or rollback transaction
-	}
-	// Step 7: Close connection (handled by try-with-resources syntax)
-    }
+	//     // Step 6: (omitted in this example) Commit or rollback transaction
+	// }
+	// // Step 7: Close connection (handled by try-with-resources syntax)
+ //    }
 
     private void initDb() throws SQLException {
 	try (Connection conn = DriverManager.getConnection(JDBC_URL,
 							   JDBC_USER,
 							   JDBC_PASSWORD)) {
 	    try (Statement stmt = conn.createStatement()) {
-                stmt.execute("DROP TABLE IF EXISTS hp_goods");
-                stmt.execute("CREATE TABLE hp_goods (GId varchar(15) PRIMARY KEY, Food varchar(100), Flavor varchar(100), Price DECIMAL(5,1), AvailUntil DATE)");
-                stmt.execute("INSERT INTO hp_goods (GId, Flavor, Food, Price) VALUES ('L1', 'Lemon', 'Cake', 20.0)");
-                stmt.execute("INSERT INTO hp_goods (GId, Flavor, Food, Price) VALUES ('L2', 'Lemon', 'Twist', 3.50)");
-                stmt.execute("INSERT INTO hp_goods (GId, Flavor, Food, Price) VALUES ('A3', 'Almond', 'Twist', 4.50)");
-                stmt.execute("INSERT INTO hp_goods (GId, Flavor, Food, Price) VALUES ('A4', 'Almond', 'Cookie', 4.50)");
-                stmt.execute("INSERT INTO hp_goods (GId, Flavor, Food, Price) VALUES ('L5', 'Lemon', 'Cookie', 1.50)");
-                stmt.execute("INSERT INTO hp_goods (GId, Flavor, Food, Price) VALUES ('A6', 'Almond', 'Danish', 2.50)");
+                stmt.execute("DROP TABLE IF EXISTS reservations");
+                stmt.execute("CREATE TABLE reservations (﻿CODE varchar(15) PRIMARY KEY, Room varchar(15), CheckIn DATE, Checkout DATE, Rate DECIMAL(5, 2), LastName varchar(100), FirstName varchar(100), Adults INTEGER, Kids INTEGER)");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10105', 'HBB', '2010-10-23', '2010-10-25', '100', 'SELBIG', 'CONRAD', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10183', 'IBD', '2010-09-19', '2010-09-20', '150', 'GABLER', 'DOLLIE', '2', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10449', 'RND', '2010-09-30', '2010-10-01', '150', 'KLESS', 'NELSON', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10489', 'AOB', '2010-02-02', '2010-02-05', '218.75', 'CARISTO', 'MARKITA', '2', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10500', 'HBB', '2010-08-11', '2010-08-12', '90', 'YESSIOS', 'ANNIS', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10574', 'FNA', '2010-11-26', '2010-12-03', '287.5', 'SWEAZY', 'ROY', '2', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10984', 'AOB', '2010-12-28', '2011-01-01', '201.25', 'ZULLO', 'WILLY', '2', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10990', 'CAS', '2010-09-21', '2010-09-27', '175', 'TRACHSEL', 'DAMIEN', '1', '3')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('11631', 'FNA', '2010-04-10', '2010-04-12', '312.5', 'ESPINO', 'MARCELINA', '2', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('11645', 'IBD', '2010-05-13', '2010-05-19', '135', 'SWAIT', 'DAN', '2', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('11703', 'IBD', '2010-09-10', '2010-09-11', '172.5', 'HAVIS', 'SHERILYN', '2', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('11718', 'CAS', '2010-03-18', '2010-03-19', '157.5', 'GLIWSKI', 'DAN', '2', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('11857', 'IBD', '2010-10-27', '2010-10-29', '187.5', 'HARDINA', 'LORITA', '4', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('11996', 'IBS', '2010-09-14', '2010-09-16', '187.5', 'BURBANK', 'ROBERT', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('12085', 'IBD', '2010-09-04', '2010-09-08', '135', 'GLASGLOW', 'EMMANUEL', '2', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('12138', 'IBS', '2010-02-28', '2010-03-05', '150', 'SHARIAT', 'JARRED', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('12142', 'RTE', '2010-08-13', '2010-08-23', '175', 'JUNOR', 'LENNY', '3', '1')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('12258', 'AOB', '2010-04-23', '2010-04-27', '175', 'KANNEL', 'RODGER', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('12631', 'CAS', '2010-04-24', '2010-04-26', '175', 'ONEEL', 'PASQUALE', '1', '0')");
+                stmt.execute("INSERT INTO reservations (﻿CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('12686', 'HBB', '2010-07-22', '2010-07-25', '85', 'GROWNEY', 'MELVIN', '2', '0')");
 	    }
 	}
     }
-
-
 
 }
 
