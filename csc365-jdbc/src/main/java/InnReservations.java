@@ -227,6 +227,7 @@ public class InnReservations {
 							   JDBC_PASSWORD)) {
             Scanner sc = new Scanner(System.in);
             System.out.println("Please enter your reservation code");
+
             int rcode = sc.nextInt();
             System.out.println("Please type 'confirm' to confirm the cancellation of your reservation");
             String input = sc.nextLine();
