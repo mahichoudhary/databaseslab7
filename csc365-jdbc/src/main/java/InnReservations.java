@@ -91,7 +91,101 @@ public class InnReservations {
 	// }
 	// // Step 7: Close connection (handled by try-with-resources syntax)
  //    }
+    private void reservations(){
+         try (Connection conn = DriverManager.getConnection(JDBC_URL,
+	 						   JDBC_USER,
+							   JDBC_PASSWORD)){
+            Scanner sc = new Scanner(System.in);
+            //prompt for firstname
+            System.out.println("Please enter your firstname");
+            String first = scanner.nextLine();
+            System.out.println("Please enter your lastname");
+            String last = scanner.nextLine();
+            System.out.println("Please enter your room code"); 
+            String code = scanner.nextLine(); 
+            System.out.println("Please enter your begin date of stay"); 
+            String begin = scanner.nextLine(); 
+            System.out.println("Please enter your end date of stay"); 
+            String end = scanner.nextLine();
+            System.out.println("Please enter the number of children"); 
+            int numchild = scanner.nextInt();
+            System.out.println("Please enter the number of adults"); 
+            int numadult = scanner.nextInt();
 
+            //check availability
+            //create sql statement
+            //print confirmation
+    }
+
+
+    private void reservChange(){
+        try (Connection conn = DriverManager.getConnection(JDBC_URL,
+	 						   JDBC_USER,
+							   JDBC_PASSWORD)){
+            Scanner sc = new Scanner(System.in);
+            //prompt for firstname
+            System.out.println("Please enter your firstname");
+            String first = scanner.nextLine();
+            System.out.println("Please enter your lastname");
+            String last = scanner.nextLine();
+            System.out.println("Please enter your new begin date(for example 2010-10-07) or type 'no change' to indicate no change to this field"); 
+            String begin = scanner.nextLine(); 
+            if(!begin.equals("no change")){
+                //parse 
+            }
+            System.out.println("Please enter your new end date(for example 2010-10-16) or type 'no change' to indicate no change to this field"); 
+            String end = scanner.nextLine(); 
+            if(!begin.equals("no change")){
+                //parse 
+            }
+            System.out.println("Please enter the number of children"); 
+            String numchild = scanner.nextLine();
+            System.out.println("Please enter the number of adults"); 
+            String numadult = scanner.nextLine();
+
+            //call create statement to make sql statement
+            //rs.get for all variables
+            //check availability
+
+                               }
+
+    private void reservCancel(){
+        try (Connection conn = DriverManager.getConnection(JDBC_URL,
+	 						   JDBC_USER,
+							   JDBC_PASSWORD)){
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Please enter your reservation code");
+            int rcode = scanner.nextInt();
+            System.out.println("Please type 'confirm' to confirm the cancellation of your reservation");
+            String input = new Scanner(System.in);
+            if(input.equals("confirm"))
+                String deletestmt = "DELETE FROM lab7_reservations where code = ?";
+            
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement pstmt = conn.PreparedStatement(deletestmt)){
+                pstmt.setString(1, rcode);
+                int rowCount = pstmt.executeUpdate();
+
+                System.out.format("Removed %d reservation with code %s", rowCount, rcode);
+                conn.commit();            
+            
+            catch(SQLException e){
+                conn.rollback();
+            }
+
+            catch(SQLException e){
+                System.out.print("connection not made w database");
+            }
+
+            }
+            
+
+
+    }
+
+
+    }
     private void initDb() throws SQLException {
 	try (Connection conn = DriverManager.getConnection(JDBC_URL,
 							   JDBC_USER,
