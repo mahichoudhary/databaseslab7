@@ -152,7 +152,7 @@ public class InnReservations {
                     //int rowCount = pstmt.executeUpdate();
                     
                     // Step 5: Handle results
-                    System.out.format("Updated reservation %d first name to %s%n", rcode, first);
+                    System.out.format("Reservation %d first name to %s%n", rcode, first);
                     System.out.println();
 
                     // Step 6: Commit or rollback transaction
@@ -164,48 +164,131 @@ public class InnReservations {
                 else if (feature.equals("2")) {
                     System.out.println("Please edit your lastname");
                     last = sc.nextLine(); 
-                    System.out.println("change last name");
+                    updateSql = "UPDATE lab7_reservations SET LastName = ? WHERE CODE = ?";
+                    
+                    // Step 3: Start transaction
+                    conn.setAutoCommit(false);
+                    
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                    
+                    // Step 4: Send SQL statement to DBMS
+                    pstmt.setString(1, last);
+                    pstmt.setInt(2, rcode);
+                    //int rowCount = pstmt.executeUpdate();
+                    
+                    // Step 5: Handle results
+                    System.out.format("Reservation %d first name to %s%n", rcode, last);
+                    System.out.println();
+
+                    // Step 6: Commit or rollback transaction
+                    conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                    }
                 }
                 else if (feature.equals("3")) {
                     System.out.println("Please edit your begin date of stay"); 
                     begin = sc.nextLine(); 
-                    System.out.println("change begin date");
+                    updateSql = "UPDATE lab7_reservations SET CheckIn = ? WHERE CODE = ?";
+                    
+                    // Step 3: Start transaction
+                    conn.setAutoCommit(false);
+                    
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                    
+                    // Step 4: Send SQL statement to DBMS
+                    pstmt.setString(1, begin);
+                    pstmt.setInt(2, rcode);
+                    //int rowCount = pstmt.executeUpdate();
+                    
+                    // Step 5: Handle results
+                    System.out.format("Reservation %d first name to %s%n", rcode, begin);
+                    System.out.println();
+
+                    // Step 6: Commit or rollback transaction
+                    conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                    }
                 }
                 else if (feature.equals("4")) {
                     System.out.println("Please edit your end date of stay"); 
                     end = sc.nextLine();
-                    System.out.println("change end date");
+                    updateSql = "UPDATE lab7_reservations SET Checkout = ? WHERE CODE = ?";
+                    
+                    // Step 3: Start transaction
+                    conn.setAutoCommit(false);
+                    
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                    
+                    // Step 4: Send SQL statement to DBMS
+                    pstmt.setString(1, end);
+                    pstmt.setInt(2, rcode);
+                    //int rowCount = pstmt.executeUpdate();
+                    
+                    // Step 5: Handle results
+                    System.out.format("Reservation %d first name to %s%n", rcode, end);
+                    System.out.println();
+                    // Step 6: Commit or rollback transaction
+                    conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                    }
                 }
                 else if (feature.equals("5")) {
                     System.out.println("Please edit the number of children"); 
                     numchild = sc.nextInt();
-                    System.out.println("change number of children");
+                    updateSql = "UPDATE lab7_reservations SET children = ? WHERE CODE = ?";
+                    
+                    // Step 3: Start transaction
+                    conn.setAutoCommit(false);
+                    
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                    
+                    // Step 4: Send SQL statement to DBMS
+                    pstmt.setInt(1, numchild);
+                    pstmt.setInt(2, rcode);
+                    //int rowCount = pstmt.executeUpdate();
+                    
+                    // Step 5: Handle results
+                    System.out.format("Reservation %d first name to %s%n", rcode, numchild);
+                    System.out.println();
+
+                    // Step 6: Commit or rollback transaction
+                    conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                    }
                 }
                 else if (feature.equals("6")) {
                     System.out.println("Please edit the number of adults"); 
                     numadult = sc.nextInt();
-                    System.out.println("change number of adults");
+                    updateSql = "UPDATE lab7_reservations SET adults = ? WHERE CODE = ?";
+                    
+                    // Step 3: Start transaction
+                    conn.setAutoCommit(false);
+                    
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                    
+                    // Step 4: Send SQL statement to DBMS
+                    pstmt.setInt(1, numadult);
+                    pstmt.setInt(2, rcode);
+                    //int rowCount = pstmt.executeUpdate();
+                    
+                    // Step 5: Handle results
+                    System.out.format("Reservation %d first name to %s%n", rcode, numadult);
+                    System.out.println();
+
+                    // Step 6: Commit or rollback transaction
+                    conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                    }
                 }
                 else {
                     System.out.println("Please enter one of the number options above to edit [0-6].");
                 }
             }
-
-            //query = "SELECT CheckIn, CheckOut, kids, adults FROM lab7_reservations where customer's name is ? , ? ";
-
-            // try (Statement stmt = conn.createStatement()) {
-            //     ResultSet rs = stmt.executeQuery(query);
-            //     while(rs.next()){
-            //         CheckIn = rs.getDate("CheckIn");
-            //         CheckOut = rs.getDate("CheckOut");
-            //         Kids = rs.getInt("Kids");
-            //         Adults = rs.getInt("Adults");
-            //     }
-            // }
-
-            //check availability
-            //create sql statement
-            //print confirmation
         }
     }
 
@@ -268,6 +351,11 @@ public class InnReservations {
                 stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10500', 'HBB', '2010-08-11', '2010-08-12', '90', 'YESSIOS', 'ANNIS', '1', '0')");
                 stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10574', 'FNA', '2010-11-26', '2010-12-03', '287.5', 'SWEAZY', 'ROY', '2', '1')");
                 stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10984', 'AOB', '2010-12-28', '2011-01-01', '201.25', 'ZULLO', 'WILLY', '2', '1')");
+
+
+                stmt.execute("DROP TABLE IF EXISTS lab7_rooms");
+                
+
 	    }
 	}
     }
