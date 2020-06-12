@@ -266,8 +266,8 @@ public class InnReservations {
                 }
                 else if (input.equals("5")) {
                     System.out.println("Enter edit for the number of children"); 
-                    numchild = sc.nextInt();
-                    updateSql = "UPDATE lab7_reservations SET children = ? WHERE CODE = ?";
+                    numchild = Integer.parseInt(sc.nextLine());
+                    updateSql = "UPDATE lab7_reservations SET Kids = ? WHERE CODE = ?";
                     
                     // Step 3: Start transaction
                     conn.setAutoCommit(false);
@@ -284,13 +284,14 @@ public class InnReservations {
                     // Step 6: Commit or rollback transaction
                     conn.commit();
                     } catch (SQLException e) {
+                        System.out.println("error");
                         conn.rollback();
                     }
                 }
                 else if (input.equals("6")) {
                     System.out.println("Enter edit the number of adults"); 
-                    numadult = sc.nextInt();
-                    updateSql = "UPDATE lab7_reservations SET adults = ? WHERE CODE = ?";
+                    numadult = Integer.parseInt(sc.nextLine());
+                    updateSql = "UPDATE lab7_reservations SET Adults = ? WHERE CODE = ?";
                     
                     // Step 3: Start transaction
                     conn.setAutoCommit(false);
@@ -324,7 +325,8 @@ public class InnReservations {
         System.out.println("[2] Edit Last Name");
         System.out.println("[3] Edit Begin Date");
         System.out.println("[4] Edit End Date");
-        System.out.println("[5] Edit number of Adults");
+        System.out.println("[5] Edit number of Children");
+        System.out.println("[6] Edit number of Adults");
         System.out.println();
     }
 
@@ -336,8 +338,8 @@ public class InnReservations {
             Scanner sc = new Scanner(System.in);
             System.out.println("Please enter your reservation code");
 
-            int rcode = sc.nextInt();
-            System.out.println("Please type 'confirm' to confirm the cancellation of your reservation");
+            int rcode = Integer.parseInt(sc.nextLine());
+            System.out.println("Please type 'confirm' to confirm the cancellation of your reservation or anything else to abort");
             String input = sc.nextLine();
             if(input.equals("confirm"))
                 deletestmt = "DELETE FROM lab7_reservations where code = ?";
@@ -348,7 +350,7 @@ public class InnReservations {
                 pstmt.setInt(1, rcode);
                 int rowCount = pstmt.executeUpdate();
 
-                System.out.format("Removed %d reservation with code %s", rowCount, rcode);
+                System.out.format("Removed %d reservation with code %s%n%n", rowCount, rcode);
                 conn.commit(); 
             }           
             
