@@ -48,7 +48,7 @@ public class InnReservations {
                 displayOptions();
                 feature = sc.nextLine();
                 if (feature.equals("1") || feature.equals("Rooms and Rates")){
-                    //roomsAndRates();
+                    roomsAndRates();
                     System.out.println("success");
                 }
                 else if (feature.equals("2") || feature.equals("Reservations")) {
@@ -74,6 +74,69 @@ public class InnReservations {
             
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage());
+        }
+    }
+
+    private void roomsAndRates() throws SQLException
+    {
+        try (Connection conn = DriverManager.getConnection(JDBC_URL,
+                                   JDBC_USER,
+                                   JDBC_PASSWORD)) {
+
+            LocalDate today = java.time.LocalDate.now();
+
+            String sql = "SELECT RoomCode, RoomName, Beds, bedType, maxOcc, basePrice, decor, Checkout, next_begin FROM lab7_rooms LEFT OUTER JOIN (SELECT Room, CheckIn, Checkout FROM lab7_reservations WHERE CheckIn < ? AND Checkout > ?) AS B ON B.Room = RoomCode LEFT OUTER JOIN (SELECT Room, Min(CheckIn) AS next_begin FROM lab7_reservations WHERE ? < CheckIn GROUP BY Room) AS C ON C.Room = RoomCode";
+
+            // Step 3: (omitted in this example) Start transaction
+            conn.setAutoCommit(false);
+
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setDate(1, java.sql.Date.valueOf(today));
+                stmt.setDate(2, java.sql.Date.valueOf(today));
+                stmt.setDate(3, java.sql.Date.valueOf(today));
+
+                try (ResultSet rs = stmt.executeQuery()) {
+
+                    // Step 5: Receive results
+                    while (rs.next()) {
+                        String roomCode = rs.getString("RoomCode");
+                        String roomName = rs.getString("RoomName");
+                        int beds = rs.getInt("Beds");
+                        String bedType = rs.getString("bedType");
+                        int maxOcc = rs.getInt("maxOcc");
+                        float basePrice = rs.getFloat("basePrice");
+                        String decor = rs.getString("decor");
+                        java.sql.Date cOut = rs.getDate("Checkout");
+                        java.sql.Date nextBegin = rs.getDate("next_begin");
+                        
+                        if (cOut == null)
+                        {
+                            if (nextBegin == null)
+                            {
+                                System.out.format("%s %s %d %s %d ($%.2f) %s Today None %n", roomCode, roomName, beds, bedType, maxOcc, basePrice, decor); 
+                            } else {
+                                System.out.format("%s %s %d %s %d ($%.2f) %s Today %tF %n", roomCode, roomName, beds, bedType, maxOcc, basePrice, decor, nextBegin.toLocalDate()); 
+                            }
+                                              
+                        }
+                        else {
+                            
+                            if (nextBegin == null)
+                            {
+                                System.out.format("%s %s %d %s %d ($%.2f) %s %tF None %n", roomCode, roomName, beds, bedType, maxOcc, basePrice, decor, cOut.toLocalDate());
+                            } else {
+                                System.out.format("%s %s %d %s %d ($%.2f) %s %tF %tF %n", roomCode, roomName, beds, bedType, maxOcc, basePrice, decor, cOut.toLocalDate(), nextBegin.toLocalDate());
+                            }
+                            
+                        }
+                    }
+                }
+                conn.commit();
+            } catch (SQLException e) {
+                System.out.println(e);
+                conn.rollback();
+            }
         }
     }
 
@@ -370,7 +433,7 @@ public class InnReservations {
                                JDBC_PASSWORD)) {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("DROP TABLE IF EXISTS lab7_reservations");
-            stmt.execute("CREATE TABLE lab7_reservations (CODE int(10) PRIMARY KEY, Room varchar(15), CheckIn DATE, Checkout DATE, Rate DECIMAL(5, 2), LastName varchar(100), FirstName varchar(100), Adults INTEGER, Kids INTEGER)");
+            stmt.execute("CREATE TABLE lab7_reservations (CODE int(10) PRIMARY KEY, Room varchar(15), CheckIn DATE, Checkout DATE, Rate float, LastName varchar(100), FirstName varchar(100), Adults INTEGER, Kids INTEGER)");
             stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10105', 'HBB', '2010-10-23', '2010-10-25', '100', 'SELBIG', 'CONRAD', '1', '0')");
             stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10183', 'IBD', '2010-09-19', '2010-09-20', '150', 'GABLER', 'DOLLIE', '2', '0')");
             stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10449', 'RND', '2010-09-30', '2010-10-01', '150', 'KLESS', 'NELSON', '1', '0')");
@@ -380,7 +443,7 @@ public class InnReservations {
             stmt.execute("INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES ('10984', 'AOB', '2010-12-28', '2011-01-01', '201.25', 'ZULLO', 'WILLY', '2', '1')");
 
             stmt.execute("DROP TABLE IF EXISTS lab7_rooms");
-            stmt.execute("CREATE TABLE lab7_rooms (RoomCode char(5) PRIMARY KEY, RoomName varchar(30), Beds int(11), bedType varchar(8), maxOcc int(11), basePrice DECIMAL(5, 2), decor varchar(20))");
+            stmt.execute("CREATE TABLE lab7_rooms (RoomCode char(5) PRIMARY KEY, RoomName varchar(30), Beds int(11), bedType varchar(8), maxOcc int(11), basePrice float, decor varchar(20))");
             stmt.execute("INSERT INTO lab7_rooms (RoomCode, RoomName, Beds, bedType, maxOcc, basePrice, decor) VALUES ('AOB', 'Abscond or bolster', '2', 'Queen', '4', '175', 'traditional')");
             stmt.execute("INSERT INTO lab7_rooms (RoomCode, RoomName, Beds, bedType, maxOcc, basePrice, decor) VALUES ('CAS', 'Convoke and sanguine', '2', 'King', '4', '175', 'traditional')");
             stmt.execute("INSERT INTO lab7_rooms (RoomCode, RoomName, Beds, bedType, maxOcc, basePrice, decor) VALUES ('FNA', 'Frugal not apropos', '2', 'King', '4', '250', 'traditional')");
