@@ -1,5 +1,7 @@
 # databaseslab7
 
+Mahi Choudhary, Garrett Lew, Kaitlin Clever
+
 ### How to run
 
 1. CD to the csc365-jdbc directory
