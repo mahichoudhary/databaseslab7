@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.LinkedHashMap;
@@ -52,7 +52,7 @@ public class InnReservations {
                     System.out.println("success");
                 }
                 else if (feature.equals("2") || feature.equals("Reservations")) {
-                    //reservations();
+                    reservations();
                 }
                 else if (feature.equals("3") || feature.equals("Reservation Change")) {
                     rchange();
@@ -140,40 +140,136 @@ public class InnReservations {
         }
     }
 
-    // private void reservations(){
-    //     try (Connection conn = DriverManager.getConnection(JDBC_URL,
-    //                         JDBC_USER,
-    //                         JDBC_PASSWORD)){
-    //     Scanner sc = new Scanner(System.in);
-    //     //prompt for firstname
-    //     String query = "";
-    //     String first = "";
-    //     String last = "";
-    //     String code = "";
-    //     String begin = "";
-    //     String end = "";
-    //     String roomname = "";
-    //     String bedtype = "";
-    //     int numchild = 0;
-    //     int numadult = 0;
-    //     boolean availability = false;
-        
-    //     System.out.println("Please enter your firstname");
-    //     first = sc.nextLine();
-    //     System.out.println("Please enter your lastname");
-    //     last = sc.nextLine();
-    //     System.out.println("Please enter your room code"); 
-    //     code = sc.nextLine(); 
-    //     System.out.println("Please enter your begin date of stay"); 
-    //     begin = sc.nextLine(); 
-    //     System.out.println("Please enter your end date of stay"); 
-    //     end = sc.nextLine();
-    //     System.out.println("Please enter the number of children"); 
-    //     numchild = sc.nextInt();
-    //     System.out.println("Please enter the number of adults"); 
-    //     numadult = sc.nextInt();
-    //                         }
-    // }
+    private void reservations() throws SQLException{
+        try (Connection conn = DriverManager.getConnection(JDBC_URL,
+                            JDBC_USER,
+                            JDBC_PASSWORD)){
+            Scanner sc = new Scanner(System.in);
+            //prompt for firstname
+            String query = "";
+            String first = "";
+            String last = "";
+            String code = "";
+            int rCode = 0;
+            String occ = "";
+            String roomName = "";
+            String bedType = "";
+            float basePrice = 0;
+            float weekenddaysprice = 0;
+            float totalnewprice = 0;
+            int numchild = 0;
+            int numadult = 0;
+            int numPeople = 0;
+            int maxOccupancy = 0;
+            int totalweekdays = 0;
+            int weekenddays = 0;
+            int totaldays = 0;
+            boolean availability = true;
+            boolean occAllowed = true;
+            
+            System.out.println("Please enter your firstname");
+            first = sc.nextLine();
+            System.out.println("Please enter your lastname");
+            last = sc.nextLine();
+            System.out.println("Please enter your room code"); 
+            code = sc.nextLine(); 
+            System.out.println("Please enter your begin date of stay (YYYY-MM-DD)"); 
+            LocalDate begin = LocalDate.parse(sc.nextLine());
+            System.out.println("Please enter your end date of stay YYYY-MM-DD)"); 
+            LocalDate end = LocalDate.parse(sc.nextLine());
+            System.out.println("Please enter the number of children"); 
+            numchild = Integer.parseInt(sc.nextLine());
+            System.out.println("Please enter the number of adults"); 
+            numadult = Integer.parseInt(sc.nextLine());   
+
+            occ = "SELECT RoomName, bedType, maxOcc, basePrice FROM lab7_Rooms WHERE RoomCode = ?";
+
+            // Step 3: Start transaction
+            conn.setAutoCommit(false);
+
+            try(PreparedStatement pstmt = conn.prepareStatement(occ)){
+                numPeople = numchild + numadult;
+                pstmt.setString(1, code);
+                ResultSet rs = pstmt.executeQuery();
+                while(rs.next()){
+                    roomName = rs.getString("RoomName");
+                    bedType = rs.getString("bedType");
+                    maxOccupancy = rs.getInt("maxOcc");
+                    basePrice = rs.getFloat("basePrice");
+                    if(numPeople > maxOccupancy){
+                        occAllowed = false;
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
+                conn.rollback();
+            }
+
+            //System.out.println(getNewReservationCode());
+
+            //check for availabilty 
+
+            if(availability == false || occAllowed == false){
+                System.out.println("Reservation could not be made because maximum guests exceeded or no available rooms");
+
+            }
+            else {
+                totaldays = (int) ChronoUnit.DAYS.between(begin, end);
+                totalweekdays = weekdays(begin, end);
+                weekenddays = totaldays - totalweekdays;
+                weekenddaysprice = (float) (weekenddaysprice * (1.1 * basePrice));
+                totalnewprice = (totalweekdays * basePrice ) + weekenddaysprice;
+                //System.out.println(totalnewprice);
+
+                rCode = getNewReservationCode();
+
+                String insertSQL = "INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+                try(PreparedStatement pstmt = conn.prepareStatement(insertSQL)){
+                    pstmt.setInt(1, rCode);
+                    pstmt.setString(2, code);
+                    pstmt.setDate(3, java.sql.Date.valueOf(begin));
+                    pstmt.setDate(4, java.sql.Date.valueOf(end));
+                    pstmt.setFloat(5, totalnewprice);
+                    pstmt.setString(6, last);
+                    pstmt.setString(7, first);
+                    pstmt.setInt(8, numadult);
+                    pstmt.setInt(9, numchild);
+
+                    System.out.format("Rerservation %d created without conflict -> First Name: %s, Last Name: %s, Room Code: %s, Room Name: %s, Bed Type: %s, Begin Date: %tF,  End Date: %tF, Adults: %d, Children %d, Total Cost of Stay: ($%.2f) %n",
+                        rCode, first, last, code, roomName, bedType, begin, end, numadult, numchild, totalnewprice);
+                }
+            }
+        }
+    }
+
+    private int weekdays(LocalDate checkedIn, LocalDate checkedOut){
+        final long days = ChronoUnit.DAYS.between(checkedIn, checkedOut);
+        long result = days - 2*(days/7);
+        return (int) result;
+    }
+
+    private int getNewReservationCode() throws SQLException
+    {
+        int largest_code = 0;
+
+        try (Connection conn = DriverManager.getConnection(JDBC_URL,
+                                   JDBC_USER,
+                                   JDBC_PASSWORD)) {
+            
+            String sqlCode = "SELECT MAX(CODE) AS code FROM lab7_reservations";
+
+            try (Statement stmtCode = conn.createStatement();
+             ResultSet rs = stmtCode.executeQuery(sqlCode)) {
+
+                while(rs.next())
+                {
+                    largest_code = rs.getInt("code");
+                }
+            }
+        }
+        return largest_code+1;
+    }
 
     private void rchange() throws SQLException {
          try (Connection conn = DriverManager.getConnection(JDBC_URL,
