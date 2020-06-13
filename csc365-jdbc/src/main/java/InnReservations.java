@@ -552,6 +552,79 @@ public class InnReservations {
         } 
     }
 
+    // private void revenue() throws SQLException {
+
+    //     try (Connection conn = DriverManager.getConnection(JDBC_URL,
+    //                                JDBC_USER,
+    //                                JDBC_PASSWORD)) {
+    //         String sql = ("SELECT J.Room, J.T, F.T, M.T, A.T, MA.T, JN.T, JU.T, AU.T, S.T, O.T, N.T, D.T, TOT.T FROM " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 1 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS J " +
+    //                             "JOIN (SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 2 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS F " +
+    //                             "ON J.Room = F.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 3 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS M " +
+    //                             "ON F.Room = M.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 4 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS A " +
+    //                             "ON A.Room = M.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 5 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS MA " +
+    //                             "ON MA.Room = M.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 6 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS JN " +
+    //                             "ON J.Room = MA.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 7 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS JU " +
+    //                             "ON JU.Room = JN.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 8 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS AU " +
+    //                             "ON AU.Room = JU.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 9 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS S " +
+    //                             "ON S.Room = AU.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 10 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS O " +
+    //                             "ON O.Room = S.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 11 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS N " +
+    //                             "ON O.Room = N.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? AND MONTH(Checkout) = 12 " +
+    //                             "GROUP BY MONTH(Checkout), Room) AS D " +
+    //                             "ON D.Room = N.Room " +
+    //                             "JOIN " +
+    //                             "(SELECT Room, ROUND(SUM(Rate * DATEDIFF(Checkout, CheckIn))) AS T FROM lab7_reservations " +
+    //                             "WHERE YEAR(Checkout) = ? " +
+    //                             "GROUP BY Room) AS TOT " +
+    //                             "ON TOT.Room = J.Room");
+
+    //     }
+
+    // }
+
     private void initDb() throws SQLException {
     try (Connection conn = DriverManager.getConnection(JDBC_URL,
                                JDBC_USER,
