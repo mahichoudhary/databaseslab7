@@ -208,6 +208,23 @@ public class InnReservations {
             //System.out.println(getNewReservationCode());
 
             //check for availabilty 
+            String conflictSQL = "SELECT * FROM lab7_reservations WHERE Room = ? AND Checkout > ? AND CheckIn < ? ";
+        
+            try (PreparedStatement cstmt = conn.prepareStatement(conflictSQL)) {
+            
+                // Step 4: Send SQL statement to DBMS
+                cstmt.setString(1, code);
+                cstmt.setDate(2, java.sql.Date.valueOf(begin));
+                cstmt.setDate(3, java.sql.Date.valueOf(end));
+
+                try (ResultSet rs = cstmt.executeQuery()) {
+                    if (rs.next())
+                    {
+                        availability = false;
+                    }      
+                }
+            }
+
 
             if(availability == false || occAllowed == false){
                 System.out.println("Reservation could not be made because maximum guests exceeded or no available rooms");
@@ -225,7 +242,7 @@ public class InnReservations {
 
                 String insertSQL = "INSERT INTO lab7_reservations (CODE, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults, Kids) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-                try(PreparedStatement pstmt = conn.prepareStatement(insertSQL)){
+                try(PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
                     pstmt.setInt(1, rCode);
                     pstmt.setString(2, code);
                     pstmt.setDate(3, java.sql.Date.valueOf(begin));
@@ -238,6 +255,12 @@ public class InnReservations {
 
                     System.out.format("Rerservation %d created without conflict -> First Name: %s, Last Name: %s, Room Code: %s, Room Name: %s, Bed Type: %s, Begin Date: %tF,  End Date: %tF, Adults: %d, Children %d, Total Cost of Stay: ($%.2f) %n",
                         rCode, first, last, code, roomName, bedType, begin, end, numadult, numchild, totalnewprice);
+
+                    pstmt.execute();
+                    conn.commit();
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    conn.rollback();
                 }
             }
         }
@@ -307,6 +330,7 @@ public class InnReservations {
                     // Step 4: Send SQL statement to DBMS
                     pstmt.setString(1, first);
                     pstmt.setInt(2, rcode);
+                    pstmt.executeUpdate();
                     
                     // Step 5: Handle results
                     System.out.format("Updated first name to %s for reservation %d%n%n", first, rcode);
@@ -330,6 +354,7 @@ public class InnReservations {
                     // Step 4: Send SQL statement to DBMS
                     pstmt.setString(1, last);
                     pstmt.setInt(2, rcode);
+                    pstmt.executeUpdate();
                     
                     // Step 5: Handle results
                     System.out.format("Updated last name to %s for reservation %d%n%n", last, rcode);
@@ -369,6 +394,7 @@ public class InnReservations {
                                 // Step 4: Send SQL statement to DBMS
                                 pstmt.setDate(1, java.sql.Date.valueOf(begin));
                                 pstmt.setInt(2, rcode);
+                                pstmt.executeUpdate();
                                 
                                 // Step 5: Handle results
                                 System.out.format("Updated begin date to %tF for reservation %d%n%n", begin, rcode);
@@ -410,6 +436,7 @@ public class InnReservations {
                                 // Step 4: Send SQL statement to DBMS
                                 pstmt.setDate(1, java.sql.Date.valueOf(end));
                                 pstmt.setInt(2, rcode);
+                                pstmt.executeUpdate();
                                 
                                 // Step 5: Handle results
                                 System.out.format("Updated end date to %tF for reservation %d%n%n", end, rcode);
@@ -436,6 +463,7 @@ public class InnReservations {
                     // Step 4: Send SQL statement to DBMS
                     pstmt.setInt(1, numchild);
                     pstmt.setInt(2, rcode);
+                    pstmt.executeUpdate();
                     
                     // Step 5: Handle results
                     System.out.format("Updated number of children to %d for reservation %d%n%n", numchild, rcode);
@@ -460,6 +488,7 @@ public class InnReservations {
                     // Step 4: Send SQL statement to DBMS
                     pstmt.setInt(1, numadult);
                     pstmt.setInt(2, rcode);
+                    pstmt.executeUpdate();
                     
                     // Step 5: Handle results
                     System.out.format("Updated number of adults to %d for reservation %d%n%n", numadult, rcode);
